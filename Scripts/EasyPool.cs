@@ -8,17 +8,13 @@ public abstract class EasyPool<T> : IEasyPool<T> where T : Node
 {
     private Node _parent;
 
-    protected EasyPool()
+    public EasyPool(EasyPoolSettings settings)
     {
-        _parent = new Node()
+        _parent = settings.Parent;
+        _parent ??= new Node()
         {
             Name = $"[{typeof(T)}] Pool"
         };
-    }
-
-    protected EasyPool(Node parent)
-    {
-        _parent = parent ?? throw new ArgumentNullException(nameof(parent), "EasyPool failed to initialize; given parent was null");
     }
 
     public abstract void Clear();
