@@ -8,7 +8,7 @@ public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
 {
     private readonly Stack<T> _container;
 
-    public EasyStackPool(EasyPoolSettings settings) : base(settings)
+    public EasyStackPool(EasyPoolSettings settings, Func<T> creationDelegate) : base(settings, creationDelegate)
     {
         if (settings.Capacity.HasValue)
         {
@@ -26,16 +26,30 @@ public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
 
     public override void Clear()
     {
-        throw new NotImplementedException();
+        while (_container.Count != 0)
+        {
+            _container.Pop().QueueFree();
+        }
     }
 
     public override T Fetch()
     {
-        throw new NotImplementedException();
+        if (_container.Count == 0)
+        {
+            return _creationDelegate.Invoke();
+        }
+
+        var top = _container.Pop();
+        _parent.RemoveChild(top);
+
+        return top;
     }
 
     public override void Return(T instance)
     {
-        throw new NotImplementedException();
+        instance.SetProcess(false);
+
+        instance.Owner?.RemoveChild(instance);
+        _parent.AddChild(instance);
     }
 }

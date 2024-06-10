@@ -6,9 +6,18 @@ namespace EasyPool;
 
 public abstract class EasyPool<T> : IEasyPool<T> where T : Node
 {
-    private Node _parent;
+    protected Node _parent;
+    protected Func<T> _creationDelegate;
 
-    public EasyPool(EasyPoolSettings settings)
+    /// <summary>
+    /// Initializes the easy pool.
+    /// </summary>
+    /// <param name="settings">Settings of the pool.</param>
+    /// <param name="creationDelegate">
+    /// Delegate to be invoked if <see cref="Fetch"/>is invoked on an empty contain 
+    /// - in this case, a new instance is returned using this func.
+    /// </param>
+    public EasyPool(EasyPoolSettings settings, Func<T> creationDelegate)
     {
         if (settings == null)
         {
@@ -20,6 +29,8 @@ public abstract class EasyPool<T> : IEasyPool<T> where T : Node
         {
             Name = $"[{typeof(T)}] Pool"
         };
+
+        _creationDelegate = creationDelegate;
     }
 
     public abstract void Clear();
