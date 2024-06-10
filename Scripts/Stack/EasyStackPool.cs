@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-namespace EasyPool;
+namespace EasyPool.Stack;
 
 public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
 {
@@ -10,7 +10,18 @@ public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
 
     public EasyStackPool(EasyPoolSettings settings) : base(settings)
     {
-        
+        if (settings.Capacity.HasValue)
+        {
+            _container = new Stack<T>(settings.Capacity.Value);
+        }
+        else if (settings.AmountToPreload.HasValue)
+        {
+            _container = new Stack<T>(settings.AmountToPreload.Value);
+        }
+        else
+        {
+            _container = new Stack<T>();
+        }
     }
 
     public override void Clear()

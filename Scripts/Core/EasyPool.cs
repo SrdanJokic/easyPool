@@ -10,6 +10,11 @@ public abstract class EasyPool<T> : IEasyPool<T> where T : Node
 
     public EasyPool(EasyPoolSettings settings)
     {
+        if (settings == null)
+        {
+            throw new ArgumentNullException(nameof(settings), $"EasyPool failed to initialize; {nameof(settings)} was null");
+        }
+
         _parent = settings.Parent;
         _parent ??= new Node()
         {
