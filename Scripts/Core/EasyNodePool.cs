@@ -45,7 +45,17 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
     public T Borrow(Func<T> creationDelegate)
     {
         CountBorrowed++;
-        return DoBorrow(creationDelegate);
+
+        if (CountInPool == 0)
+        {
+            return creationDelegate?.Invoke();
+        }
+
+        // Unlink the child from the pool tree
+        var instance = DoBorrow(creationDelegate);
+        Parent.RemoveChild(instance);
+
+        return instance;
     }
 
     protected abstract T DoBorrow(Func<T> creationDelegate);
@@ -55,13 +65,24 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         // If adding the node would breach capacity, destroy it instead
         if (Settings.Capacity.HasValue && CountInPool + 1 > Settings.Capacity.Value)
         {
-            instance.QueueFree();
+            Free(instance);
             return;
         }
 
         CountBorrowed = CountBorrowed > 0 ? CountBorrowed - 1 : 0;
+        
+        // Re-link the child under the pool tree
+        instance.SetProcess(false);
+        instance.Owner?.RemoveChild(instance);
+        Parent.AddChild(instance);
+
         DoReturn(instance);
     }
 
     protected abstract void DoReturn(T instance);
+
+    protected void Free(T instance)
+    {
+        instance.QueueFree();
+    }
 }

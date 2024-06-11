@@ -26,28 +26,17 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
     {
         while (_container.Count != 0)
         {
-            _container.Pop().QueueFree();
+            Free(_container.Pop());
         }
     }
 
     protected override T DoBorrow(Func<T> creationDelegate)
     {
-        if (_container.Count == 0)
-        {
-            return creationDelegate?.Invoke();
-        }
-
-        var top = _container.Pop();
-        Parent.RemoveChild(top);
-
-        return top;
+        return _container.Pop();
     }
 
     protected override void DoReturn(T instance)
     {
-        instance.SetProcess(false);
-
-        instance.Owner?.RemoveChild(instance);
-        Parent.AddChild(instance);
+        _container.Push(instance);
     }
 }
