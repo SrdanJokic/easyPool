@@ -6,6 +6,8 @@ namespace EasyPool.Stack;
 
 public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
 {
+    public override int CountInPool => _container.Count;
+
     private readonly Stack<T> _container;
 
     public EasyStackPool(EasyPoolSettings settings) : base(settings)
@@ -32,7 +34,7 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         }
     }
 
-    public override T Fetch(Func<T> creationDelegate)
+    public override T Borrow(Func<T> creationDelegate)
     {
         if (_container.Count == 0)
         {
@@ -51,6 +53,11 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
 
         instance.Owner?.RemoveChild(instance);
         Parent.AddChild(instance);
+    }
+
+    protected override T DoBorrow(Func<T> creationDelegate)
+    {
+        throw new NotImplementedException();
     }
 }
 

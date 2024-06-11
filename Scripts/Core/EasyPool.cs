@@ -6,9 +6,11 @@ namespace EasyPool;
 
 public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
 {
-    protected Node Parent;
-    protected Func<T> CreationDelegate;
+    public int CountBorrowed { get; private set; }
+    public abstract int CountInPool { get; }
+
     protected EasyPoolSettings Settings;
+    protected Node Parent;
 
     /// <summary>
     /// Initializes the easy pool.
@@ -22,16 +24,30 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         }
 
         Settings = settings;
-        Parent = settings.Parent;
-        Parent ??= new Node()
+        Parent = GetParent(settings);
+    }
+
+    private static Node GetParent(EasyPoolSettings settings)
+    {
+        var parent = settings.Parent;
+        parent ??= new Node()
         {
             Name = $"[{typeof(T)}] Pool"
         };
+
+        return parent;
     }
 
     public abstract void Clear();
 
-    public abstract T Fetch(Func<T> creationDelegate);
+    public virtual T Borrow(Func<T> creationDelegate)
+    {
+        CountBorrowed++;
+
+        return DoBorrow(creationDelegate);
+    }
+
+    protected abstract T DoBorrow(Func<T> creationDelegate);
 
     public abstract void Return(T instance);
 
