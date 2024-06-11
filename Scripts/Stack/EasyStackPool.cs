@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace EasyPool.Stack;
 
-public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
+public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
 {
     private readonly Stack<T> _container;
 
-    public EasyStackPool(EasyPoolSettings settings, Func<T> creationDelegate) : base(settings, creationDelegate)
+    public EasyStackPool(EasyPoolSettings settings) : base(settings)
     {
         if (settings.Capacity.HasValue)
         {
@@ -32,15 +32,15 @@ public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
         }
     }
 
-    public override T Fetch()
+    public override T Fetch(Func<T> creationDelegate)
     {
         if (_container.Count == 0)
         {
-            return _creationDelegate.Invoke();
+            return creationDelegate?.Invoke();
         }
 
         var top = _container.Pop();
-        _parent.RemoveChild(top);
+        Parent.RemoveChild(top);
 
         return top;
     }
@@ -50,6 +50,10 @@ public sealed class EasyStackPool<T> : EasyPool<T> where T : Node
         instance.SetProcess(false);
 
         instance.Owner?.RemoveChild(instance);
-        _parent.AddChild(instance);
+        Parent.AddChild(instance);
     }
 }
+
+// TODO: Fail returning if capacity would be breached
+// TODO: Fail fetching a new one if capacity would be breached
+// TODO: Preload based on the amount to preload
