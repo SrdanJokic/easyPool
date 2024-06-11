@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="easyPool"
-run/main_scene="res://Scenes/Main.tscn"
+run/main_scene="res://Samples/Scenes/Main.tscn"
 config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
