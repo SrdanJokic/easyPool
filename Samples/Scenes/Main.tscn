@@ -1,3 +1,13 @@
-[gd_scene format=3 uid="uid://dcywshc7y8cda"]
+[gd_scene load_steps=3 format=3 uid="uid://dcywshc7y8cda"]
+
+[ext_resource type="PackedScene" uid="uid://4broy0luu72n" path="res://Samples/Resources/Projectile.tscn" id="1_lm2jc"]
+[ext_resource type="Script" path="res://Samples/Scripts/PooledSpawner.cs" id="2_rfcw1"]
 
 [node name="Root" type="Node2D"]
+
+[node name="Root2D" type="Node2D" parent="."]
+
+[node name="Projectile" parent="Root2D" instance=ExtResource("1_lm2jc")]
+
+[node name="Spawner" type="Node" parent="."]
+script = ExtResource("2_rfcw1")
