@@ -40,7 +40,7 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
 
     public abstract void Clear();
 
-    public virtual T Borrow(Func<T> creationDelegate)
+    public T Borrow(Func<T> creationDelegate)
     {
         CountBorrowed++;
 

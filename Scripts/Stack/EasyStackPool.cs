@@ -34,7 +34,7 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         }
     }
 
-    public override T Borrow(Func<T> creationDelegate)
+    protected override T DoBorrow(Func<T> creationDelegate)
     {
         if (_container.Count == 0)
         {
@@ -53,11 +53,6 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
 
         instance.Owner?.RemoveChild(instance);
         Parent.AddChild(instance);
-    }
-
-    protected override T DoBorrow(Func<T> creationDelegate)
-    {
-        throw new NotImplementedException();
     }
 }
 
