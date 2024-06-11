@@ -12,10 +12,6 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
     protected EasyPoolSettings Settings;
     protected Node Parent;
 
-    /// <summary>
-    /// Initializes the easy pool.
-    /// </summary>
-    /// <param name="settings">Settings of the pool.</param>
     public EasyNodePool(EasyPoolSettings settings)
     {
         if (settings == null)
@@ -38,21 +34,34 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         return parent;
     }
 
-    public abstract void Clear();
+    public void Clear()
+    {
+        CountBorrowed = 0;
+        DoClear();
+    }
+
+    protected abstract void DoClear();
 
     public T Borrow(Func<T> creationDelegate)
     {
         CountBorrowed++;
-
         return DoBorrow(creationDelegate);
     }
 
     protected abstract T DoBorrow(Func<T> creationDelegate);
 
-    public abstract void Return(T instance);
-
-    protected void AssignParent(T instance)
+    public void Return(T instance)
     {
-        Parent.AddChild(instance);
+        // If adding the node would breach capacity, destroy it instead
+        if (Settings.Capacity.HasValue && CountInPool + 1 > Settings.Capacity.Value)
+        {
+            instance.QueueFree();
+            return;
+        }
+
+        CountBorrowed = CountBorrowed > 0 ? CountBorrowed - 1 : 0;
+        DoReturn(instance);
     }
+
+    protected abstract void DoReturn(T instance);
 }

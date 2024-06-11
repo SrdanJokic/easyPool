@@ -16,17 +16,13 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         {
             _container = new Stack<T>(settings.Capacity.Value);
         }
-        else if (settings.AmountToPreload.HasValue)
-        {
-            _container = new Stack<T>(settings.AmountToPreload.Value);
-        }
         else
         {
             _container = new Stack<T>();
         }
     }
 
-    public override void Clear()
+    protected override void DoClear()
     {
         while (_container.Count != 0)
         {
@@ -47,7 +43,7 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         return top;
     }
 
-    public override void Return(T instance)
+    protected override void DoReturn(T instance)
     {
         instance.SetProcess(false);
 
@@ -55,7 +51,3 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         Parent.AddChild(instance);
     }
 }
-
-// TODO: Fail returning if capacity would be breached
-// TODO: Fail fetching a new one if capacity would be breached
-// TODO: Preload based on the amount to preload

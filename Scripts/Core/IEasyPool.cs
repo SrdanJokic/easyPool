@@ -20,7 +20,8 @@ public interface IEasyPool<T>
     T Borrow(Func<T> creationDelegate);
 
     /// <summary>
-    /// Return an instance back into the pool.
+    /// Return an instance back into the pool. If the capacity was set and if it would
+    /// be breached by the return of an instance in a pool, the instance is destroyed instead.
     /// </summary>
     /// <param name="instance">Instance to be returned into the pool</param>
     void Return(T instance);

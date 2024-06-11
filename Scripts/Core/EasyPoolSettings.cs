@@ -6,28 +6,27 @@ namespace EasyPool;
 public class EasyPoolSettings
 {
     public int? Capacity { get; private set; }
-    public int? AmountToPreload { get; private set; }
     public Node Parent { get; private set; }
 
     private EasyPoolSettings(Builder builder)
     {
-        AmountToPreload = builder.AmountToPreload;
+        Capacity = builder.Capacity;
         Parent = builder.Parent;
     }
 
     public class Builder
     {
+        public int? Capacity { get; private set; }
         public Node Parent { get; private set; }
-        public int? AmountToPreload { get; private set; }
 
-        public Builder WithThisManyToPreload(int amountToPreload)
+        public Builder WithCapacity(int capacity)
         {
-            if (amountToPreload < 0)
+            if (capacity <= 0)
             {
-                throw new ArgumentException($"Pool settings were not created; {nameof(amountToPreload)} must be positive or 0");
+                throw new ArgumentException($"Pool settings were not created; capacity of [{capacity}] was invalid");
             }
 
-            AmountToPreload = amountToPreload;
+            Capacity = capacity;
             return this;
         }
 
