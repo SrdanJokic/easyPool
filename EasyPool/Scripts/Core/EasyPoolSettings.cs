@@ -19,6 +19,7 @@ public class EasyPoolSettings
         public int? Capacity { get; private set; }
         public Node Parent { get; private set; }
 
+
         public Builder WithCapacity(int capacity)
         {
             if (capacity <= 0)

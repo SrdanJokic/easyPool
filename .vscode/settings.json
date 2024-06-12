@@ -5,6 +5,7 @@
         "Lerp",
         "Mathf",
         "Proventus",
+        "rigidbody",
         "Tweened",
         "Unproject"
     ]

@@ -5,9 +5,14 @@
 
 [node name="Root" type="Node2D"]
 
-[node name="Root2D" type="Node2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="Projectile" parent="Root2D" instance=ExtResource("1_lm2jc")]
+[node name="ProjectileReserves" type="Node2D" parent="."]
 
-[node name="Spawner" type="Node" parent="."]
+[node name="SpawnedProjectiles" type="Node2D" parent="."]
+
+[node name="Spawner" type="Node" parent="." node_paths=PackedStringArray("_pooledContainer", "_spawnedContainer")]
 script = ExtResource("2_rfcw1")
+_pooledContainer = NodePath("../ProjectileReserves")
+_spawnedContainer = NodePath("../SpawnedProjectiles")
+_projectile = ExtResource("1_lm2jc")

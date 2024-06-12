@@ -1,8 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://4broy0luu72n"]
+[gd_scene load_steps=4 format=3 uid="uid://4broy0luu72n"]
 
 [ext_resource type="Texture2D" uid="uid://dnrl1urafnjiu" path="res://icon.svg" id="1_j4oqy"]
 [ext_resource type="Script" path="res://Samples/Scripts/Projectile.cs" id="2_qw6t0"]
 
-[node name="Projectile" type="Sprite2D"]
-texture = ExtResource("1_j4oqy")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_400tf"]
+size = Vector2(129, 128)
+
+[node name="Projectile" type="RigidBody2D" node_paths=PackedStringArray("_visibilityNotifier")]
 script = ExtResource("2_qw6t0")
+_visibilityNotifier = NodePath("VisibleOnScreenNotifier2D")
+velocity = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.08165e-12, 2.08165e-12)
+shape = SubResource("RectangleShape2D_400tf")
+disabled = true
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(3.8147e-06, -0.5)
+scale = Vector2(6.4, 6.35)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_j4oqy")
