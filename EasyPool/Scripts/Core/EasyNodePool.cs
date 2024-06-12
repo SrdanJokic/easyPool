@@ -1,6 +1,7 @@
 using EasyPool;
 using Godot;
 using System;
+using System.Diagnostics;
 
 namespace EasyPool;
 
@@ -73,7 +74,7 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         
         // Re-link the child under the pool tree
         instance.SetProcess(false);
-        instance.Owner?.RemoveChild(instance);
+        instance.GetParent()?.RemoveChild(instance);
         Parent.AddChild(instance);
 
         DoReturn(instance);

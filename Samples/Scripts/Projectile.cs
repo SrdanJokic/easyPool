@@ -19,6 +19,12 @@ public sealed partial class Projectile : RigidBody2D
         _visibilityNotifier.ScreenExited += LeaveScreen;
     }
 
+    public void Reset()
+    {
+        Position = Vector2.Zero;
+        RotationDegrees = 0f;
+    }
+
     private void LeaveScreen()
     {
         _visibilityNotifier.ScreenExited -= LeaveScreen;

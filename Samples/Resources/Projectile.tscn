@@ -9,7 +9,7 @@ size = Vector2(129, 128)
 [node name="Projectile" type="RigidBody2D" node_paths=PackedStringArray("_visibilityNotifier")]
 script = ExtResource("2_qw6t0")
 _visibilityNotifier = NodePath("VisibleOnScreenNotifier2D")
-velocity = 1.0
+velocity = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2.08165e-12, 2.08165e-12)

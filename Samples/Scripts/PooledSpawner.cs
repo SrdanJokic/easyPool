@@ -28,6 +28,9 @@ public sealed partial class PooledSpawner : Node
     public override void _Process(double delta)
     {
         var projectile = BorrowProjectile();
+        _spawnedContainer.AddChild(projectile);
+
+        projectile.Reset();
         projectile.Fire(Vector2.One, () => ReturnProjectile(projectile));
     }
 
