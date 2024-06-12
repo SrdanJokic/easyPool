@@ -12,6 +12,9 @@ public sealed partial class PooledSpawner : Node
     [Export] private Node _spawnedContainer;
     [Export] private PackedScene _projectile;
 
+    public delegate void ProcessDelegate(int borrowedCount, int availableCount);
+    public event ProcessDelegate OnProcessed;
+
     private EasyNodePool<Projectile> _projectilePool;
 
     public override void _Ready()
@@ -24,7 +27,21 @@ public sealed partial class PooledSpawner : Node
 
     public override void _Process(double delta)
     {
+        var projectile = BorrowProjectile();
+        projectile.Fire(Vector2.One, () => ReturnProjectile(projectile));
+    }
+
+    private Projectile BorrowProjectile()
+    {
         var projectile = _projectilePool.Borrow(() => _projectile.Instantiate().GetNode<Projectile>("."));
-        projectile.Fire(Vector2.One, () => _projectilePool.Return(projectile));
+        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
+
+        return projectile;
+    }
+
+    private void ReturnProjectile(Projectile projectile)
+    {
+        _projectilePool.Return(projectile);
+        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
     }
 }
