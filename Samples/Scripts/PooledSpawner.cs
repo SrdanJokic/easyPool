@@ -7,7 +7,7 @@ namespace EasyPool.Samples;
 
 public sealed partial class PooledSpawner : Node
 {
-    [Export] private int _capacity = 1000;
+    [Export] private int _capacity = 5000;
     [Export] private Node _pooledContainer;
     [Export] private Node _spawnedContainer;
     [Export] private PackedScene _projectile;
@@ -31,7 +31,7 @@ public sealed partial class PooledSpawner : Node
         _spawnedContainer.AddChild(projectile);
 
         projectile.Reset();
-        projectile.Fire(Vector2.One, () => ReturnProjectile(projectile));
+        projectile.Fire(Vector2.Right, () => ReturnProjectile(projectile));
     }
 
     private Projectile BorrowProjectile()
@@ -45,6 +45,26 @@ public sealed partial class PooledSpawner : Node
     private void ReturnProjectile(Projectile projectile)
     {
         _projectilePool.Return(projectile);
+        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
+    }
+
+    public void Reset()
+    {
+        // Purge any previous projectiles
+        var spawnedProjectiles = _spawnedContainer.GetChildren();
+        foreach (var projectile in spawnedProjectiles)
+        {
+            projectile.QueueFree();
+        }
+
+        // Purge previous cache
+        var cachedProjectiles = _spawnedContainer.GetChildren();
+        foreach (var projectile in cachedProjectiles)
+        {
+            projectile.QueueFree();
+        }
+
+        _projectilePool.Clear();
         OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
     }
 }

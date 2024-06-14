@@ -28,7 +28,7 @@ public sealed partial class Projectile : RigidBody2D
     private void LeaveScreen()
     {
         _visibilityNotifier.ScreenExited -= LeaveScreen;
-        _onOutsideOfViewport.Invoke();
+        _onOutsideOfViewport?.Invoke();
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
