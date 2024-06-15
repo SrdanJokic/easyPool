@@ -10,8 +10,10 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
     public int CountBorrowed { get; private set; }
     public abstract int CountInPool { get; }
 
+    public event Action<T> OnInstanceReturned;
+    public event Action<T> OnInstanceBorrowed;
+
     protected EasyPoolSettings Settings;
-    protected Node Parent;
 
     public EasyNodePool(EasyPoolSettings settings)
     {
@@ -21,18 +23,6 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         }
 
         Settings = settings;
-        Parent = GetParent(settings);
-    }
-
-    private static Node GetParent(EasyPoolSettings settings)
-    {
-        var parent = settings.Parent;
-        parent ??= new Node()
-        {
-            Name = $"[{typeof(T)}] Pool"
-        };
-
-        return parent;
     }
 
     public void Clear()
@@ -54,7 +44,8 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
 
         // Unlink the child from the pool tree
         var instance = DoBorrow(creationDelegate);
-        Parent.RemoveChild(instance);
+        Settings.Parent?.RemoveChild(instance);
+        OnInstanceBorrowed?.Invoke(instance);
 
         return instance;
     }
@@ -72,12 +63,17 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
 
         CountBorrowed = CountBorrowed > 0 ? CountBorrowed - 1 : 0;
         
-        // Re-link the child under the pool tree
         instance.SetProcess(false);
-        instance.GetParent()?.RemoveChild(instance);
-        Parent.AddChild(instance);
+
+        if (Settings.Parent != null)
+        {
+            // Re-link the child under the pool tree
+            instance.GetParent()?.RemoveChild(instance);
+            Settings.Parent.AddChild(instance);
+        }
 
         DoReturn(instance);
+        OnInstanceReturned?.Invoke(instance);
     }
 
     protected abstract void DoReturn(T instance);

@@ -109,14 +109,11 @@ horizontal_alignment = 2
 
 [node name="EasyPool" type="Node2D" parent="."]
 
-[node name="ProjectileReserves" type="Node2D" parent="EasyPool"]
-
 [node name="SpawnedProjectiles" type="Node2D" parent="EasyPool"]
 position = Vector2(-500, -145)
 
-[node name="Spawner" type="Node" parent="EasyPool" node_paths=PackedStringArray("_pooledContainer", "_spawnedContainer")]
+[node name="Spawner" type="Node" parent="EasyPool" node_paths=PackedStringArray("_spawnedContainer")]
 script = ExtResource("2_rfcw1")
-_pooledContainer = NodePath("../ProjectileReserves")
 _spawnedContainer = NodePath("../SpawnedProjectiles")
 _projectile = ExtResource("1_lm2jc")
 

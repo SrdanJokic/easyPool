@@ -5,8 +5,27 @@ namespace EasyPool;
 
 public interface IEasyPool<T>
 {
+    /// <summary>
+    /// The amount of instances borrowed from the pool, but not yet returned.
+    /// </summary>
     int CountBorrowed { get; }
+
+    /// <summary>
+    /// The amount of instances cached in the pool.
+    /// </summary>
     int CountInPool { get; }
+
+    /// <summary>
+    /// Invoked when an instance is returned to the pool.
+    /// Parameter returns the instance itself.
+    /// </summary>
+    event Action<T> OnInstanceReturned;
+
+    /// <summary>
+    /// Invoked when an instance is borrowed from the pool.
+    /// Parameter returns the instance itself.
+    /// </summary>
+    event Action<T> OnInstanceBorrowed;
 
     /// <summary>
     /// Fetch an instance from a pool. If the pool has no remaining instances

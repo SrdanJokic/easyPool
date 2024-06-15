@@ -8,7 +8,6 @@ namespace EasyPool.Samples;
 public sealed partial class PooledSpawner : Node
 {
     [Export] private int _capacity = 5000;
-    [Export] private Node _pooledContainer;
     [Export] private Node _spawnedContainer;
     [Export] private PackedScene _projectile;
 
@@ -21,14 +20,12 @@ public sealed partial class PooledSpawner : Node
     {
         _projectilePool = new EasyStackPool<Projectile>(new EasyPoolSettings.Builder()
             .WithCapacity(_capacity)
-            .WithParentOfInactives(_pooledContainer)
             .Build());
     }
 
     public override void _Process(double delta)
     {
         var projectile = BorrowProjectile();
-        _spawnedContainer.AddChild(projectile);
 
         projectile.Reset();
         projectile.Fire(Vector2.Right, () => ReturnProjectile(projectile));
@@ -36,8 +33,16 @@ public sealed partial class PooledSpawner : Node
 
     private Projectile BorrowProjectile()
     {
-        var projectile = _projectilePool.Borrow(() => _projectile.Instantiate().GetNode<Projectile>("."));
+        var projectile = _projectilePool.Borrow(CreateProjectile);
         OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
+
+        return projectile;
+    }
+
+    private Projectile CreateProjectile()
+    {
+        var projectile = _projectile.Instantiate().GetNode<Projectile>(".");
+        _spawnedContainer.AddChild(projectile);
 
         return projectile;
     }
@@ -50,21 +55,16 @@ public sealed partial class PooledSpawner : Node
 
     public void Reset()
     {
-        // Purge any previous projectiles
+        // Clear the pool of all cached
+        _projectilePool.Clear();
+
+        // Purge any remaining projectiles
         var spawnedProjectiles = _spawnedContainer.GetChildren();
         foreach (var projectile in spawnedProjectiles)
         {
             projectile.QueueFree();
         }
 
-        // Purge previous cache
-        var cachedProjectiles = _spawnedContainer.GetChildren();
-        foreach (var projectile in cachedProjectiles)
-        {
-            projectile.QueueFree();
-        }
-
-        _projectilePool.Clear();
         OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
     }
 }

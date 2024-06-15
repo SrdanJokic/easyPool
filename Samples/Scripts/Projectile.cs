@@ -10,6 +10,7 @@ public sealed partial class Projectile : RigidBody2D
 
     private Vector2 _direction;
     private Action _onOutsideOfViewport;
+    private bool _resetRequested;
 
     public void Fire(Vector2 direction, Action onOutsideOfViewport)
     {
@@ -21,8 +22,7 @@ public sealed partial class Projectile : RigidBody2D
 
     public void Reset()
     {
-        Position = Vector2.Zero;
-        RotationDegrees = 0f;
+        _resetRequested = true;
     }
 
     private void LeaveScreen()
@@ -34,6 +34,13 @@ public sealed partial class Projectile : RigidBody2D
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
         base._IntegrateForces(state);
+
+        if (_resetRequested)
+        {
+            _resetRequested = false;
+            Position = Vector2.Zero;
+        }
+
         LinearVelocity = _direction * velocity;
     }
 }
