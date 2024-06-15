@@ -110,19 +110,31 @@ horizontal_alignment = 2
 [node name="EasyPool" type="Node2D" parent="."]
 
 [node name="SpawnedProjectiles" type="Node2D" parent="EasyPool"]
+position = Vector2(-500, -230)
+
+[node name="SpawnedProjectiles2" type="Node2D" parent="EasyPool"]
 position = Vector2(-500, -145)
 
-[node name="Spawner" type="Node" parent="EasyPool" node_paths=PackedStringArray("_spawnedContainer")]
+[node name="SpawnedProjectiles3" type="Node2D" parent="EasyPool"]
+position = Vector2(-500, -55)
+
+[node name="Spawner" type="Node" parent="EasyPool" node_paths=PackedStringArray("_spawnedContainers")]
 script = ExtResource("2_rfcw1")
-_spawnedContainer = NodePath("../SpawnedProjectiles")
+_spawnedContainers = [NodePath("../SpawnedProjectiles"), NodePath("../SpawnedProjectiles2"), NodePath("../SpawnedProjectiles3")]
 _projectile = ExtResource("1_lm2jc")
 
 [node name="NoPool" type="Node2D" parent="."]
 
-[node name="SpawnedProjectiles" type="Node2D" parent="NoPool"]
-position = Vector2(-500, 145)
+[node name="SpawnedProjectiles1" type="Node2D" parent="NoPool"]
+position = Vector2(-500, 105)
 
-[node name="Spawner" type="Node" parent="NoPool" node_paths=PackedStringArray("_spawnedContainer")]
+[node name="SpawnedProjectiles2" type="Node2D" parent="NoPool"]
+position = Vector2(-500, 190)
+
+[node name="SpawnedProjectiles3" type="Node2D" parent="NoPool"]
+position = Vector2(-500, 275)
+
+[node name="Spawner" type="Node" parent="NoPool" node_paths=PackedStringArray("_spawnedContainers")]
 script = ExtResource("4_rc2x4")
-_spawnedContainer = NodePath("../SpawnedProjectiles")
+_spawnedContainers = [NodePath("../SpawnedProjectiles1"), NodePath("../SpawnedProjectiles2"), NodePath("../SpawnedProjectiles3")]
 _projectile = ExtResource("1_lm2jc")

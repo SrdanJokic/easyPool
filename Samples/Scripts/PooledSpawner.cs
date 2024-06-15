@@ -8,7 +8,7 @@ namespace EasyPool.Samples;
 public sealed partial class PooledSpawner : Node
 {
     [Export] private int _capacity = 5000;
-    [Export] private Node _spawnedContainer;
+    [Export] private Godot.Collections.Array<Node> _spawnedContainers;
     [Export] private PackedScene _projectile;
 
     public delegate void ProcessDelegate(int borrowedCount, int availableCount);
@@ -25,24 +25,27 @@ public sealed partial class PooledSpawner : Node
 
     public override void _Process(double delta)
     {
-        var projectile = BorrowProjectile();
+        foreach (var spawnedContainer in _spawnedContainers)
+        {
+            var projectile = BorrowProjectile(spawnedContainer);
 
-        projectile.Reset();
-        projectile.Fire(Vector2.Right, () => ReturnProjectile(projectile));
+            projectile.Reset();
+            projectile.Fire(Vector2.Right, () => ReturnProjectile(projectile));
+        }
     }
 
-    private Projectile BorrowProjectile()
+    private Projectile BorrowProjectile(Node parent)
     {
-        var projectile = _projectilePool.Borrow(CreateProjectile);
+        var projectile = _projectilePool.Borrow(() => CreateProjectile(parent));
         OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
 
         return projectile;
     }
 
-    private Projectile CreateProjectile()
+    private Projectile CreateProjectile(Node parent)
     {
         var projectile = _projectile.Instantiate().GetNode<Projectile>(".");
-        _spawnedContainer.AddChild(projectile);
+        parent.AddChild(projectile);
 
         return projectile;
     }
@@ -59,10 +62,13 @@ public sealed partial class PooledSpawner : Node
         _projectilePool.Clear();
 
         // Purge any remaining projectiles
-        var spawnedProjectiles = _spawnedContainer.GetChildren();
-        foreach (var projectile in spawnedProjectiles)
+        foreach (var spawnedContainer in _spawnedContainers)
         {
-            projectile.QueueFree();
+            var spawnedProjectiles = spawnedContainer.GetChildren();
+            foreach (var projectile in spawnedProjectiles)
+            {
+                projectile.QueueFree();
+            }
         }
 
         OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);

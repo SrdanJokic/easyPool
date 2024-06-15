@@ -5,16 +5,19 @@ namespace EasyPool.Samples;
 
 public partial class NormalSpawner : Node
 {
-    [Export] private Node _spawnedContainer;
+    [Export] private Godot.Collections.Array<Node> _spawnedContainers;
     [Export] private PackedScene _projectile;
 
     public void Reset()
     {
         // Purge any previous projectiles
-        var spawnedProjectiles = _spawnedContainer.GetChildren();
-        foreach (var projectile in spawnedProjectiles)
+        foreach (var spawnedContainer in _spawnedContainers)
         {
-            projectile.QueueFree();
+            var spawnedProjectiles = spawnedContainer.GetChildren();
+            foreach (var projectile in spawnedProjectiles)
+            {
+                projectile.QueueFree();
+            }
         }
     }
 
@@ -22,10 +25,13 @@ public partial class NormalSpawner : Node
     {
         base._Process(delta);
 
-        var projectile = _projectile.Instantiate().GetNode<Projectile>(".");
-        _spawnedContainer.AddChild(projectile);
+        foreach (var spawnedContainer in _spawnedContainers)
+        {
+            var projectile = _projectile.Instantiate().GetNode<Projectile>(".");
+            spawnedContainer.AddChild(projectile);
 
-        projectile.Reset();
-        projectile.Fire(Vector2.Right, () => projectile.QueueFree());
+            projectile.Reset();
+            projectile.Fire(Vector2.Right, () => projectile.QueueFree());
+        }
     }
 }
