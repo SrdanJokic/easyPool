@@ -31,9 +31,9 @@ public sealed partial class Projectile : RigidBody2D
         _onOutsideOfViewport?.Invoke();
     }
 
-    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    public override void _PhysicsProcess(double delta)
     {
-        base._IntegrateForces(state);
+        base._PhysicsProcess(delta);
 
         if (_resetRequested)
         {
@@ -41,6 +41,6 @@ public sealed partial class Projectile : RigidBody2D
             Position = Vector2.Zero;
         }
 
-        LinearVelocity = _direction * velocity;
+        MoveAndCollide(_direction * velocity * (float)delta);
     }
 }
