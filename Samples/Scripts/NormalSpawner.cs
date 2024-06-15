@@ -8,22 +8,19 @@ public partial class NormalSpawner : Node
     [Export] private Godot.Collections.Array<Node> _spawnedContainers;
     [Export] private PackedScene _projectile;
 
-    public void Reset()
+    private bool _isActive;
+
+    public void Toggle(bool activate)
     {
-        // Purge any previous projectiles
-        foreach (var spawnedContainer in _spawnedContainers)
-        {
-            var spawnedProjectiles = spawnedContainer.GetChildren();
-            foreach (var projectile in spawnedProjectiles)
-            {
-                projectile.QueueFree();
-            }
-        }
+        _isActive = activate;
     }
 
     public override void _Process(double delta)
     {
-        base._Process(delta);
+        if (!_isActive)
+        {
+            return;
+        }
 
         foreach (var spawnedContainer in _spawnedContainers)
         {

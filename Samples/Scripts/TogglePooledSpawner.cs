@@ -7,11 +7,15 @@ public partial class TogglePooledSpawner : CheckButton
 {
     [Export] private PooledSpawner _pooledSpawner;
 
+    public override void _Ready()
+    {
+        _pooledSpawner.Toggle(ButtonPressed);
+    }
+
     public override void _Toggled(bool toggledOn)
     {
         base._Toggled(toggledOn);
 
-        _pooledSpawner.Reset();
-        _pooledSpawner.SetProcess(toggledOn);
+        _pooledSpawner.Toggle(toggledOn);
     }
 }

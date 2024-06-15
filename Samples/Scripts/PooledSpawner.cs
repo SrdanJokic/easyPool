@@ -13,6 +13,7 @@ public sealed partial class PooledSpawner : Node
 
     public EasyNodePool<Projectile> ProjectilePool => _projectilePool;
     private EasyNodePool<Projectile> _projectilePool;
+    private bool _isActive;
 
     public override void _Ready()
     {
@@ -21,8 +22,18 @@ public sealed partial class PooledSpawner : Node
             .Build());
     }
 
+    public void Toggle(bool isActive)
+    {
+        _isActive = isActive;
+    }
+
     public override void _Process(double delta)
     {
+        if (!_isActive)
+        {
+            return;
+        }
+
         foreach (var spawnedContainer in _spawnedContainers)
         {
             var projectile = _projectilePool.Borrow(() => CreateProjectile(spawnedContainer));
@@ -38,21 +49,5 @@ public sealed partial class PooledSpawner : Node
         parent.AddChild(projectile);
 
         return projectile;
-    }
-
-    public void Reset()
-    {
-        // Clear the pool of all cached
-        _projectilePool.Clear();
-
-        // Purge any remaining projectiles
-        foreach (var spawnedContainer in _spawnedContainers)
-        {
-            var spawnedProjectiles = spawnedContainer.GetChildren();
-            foreach (var projectile in spawnedProjectiles)
-            {
-                projectile.QueueFree();
-            }
-        }
     }
 }

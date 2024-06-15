@@ -54,14 +54,14 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
 
     public void Return(T instance)
     {
+        CountBorrowed = CountBorrowed > 0 ? CountBorrowed - 1 : 0;
+
         // If adding the node would breach capacity, destroy it instead
         if (Settings.Capacity.HasValue && CountInPool + 1 > Settings.Capacity.Value)
         {
             Free(instance);
             return;
         }
-
-        CountBorrowed = CountBorrowed > 0 ? CountBorrowed - 1 : 0;
         
         instance.SetProcess(false);
 
