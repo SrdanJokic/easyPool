@@ -36,9 +36,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -122.0
-offset_top = 32.0
+offset_top = 17.0
 offset_right = -37.0
-offset_bottom = 109.0
+offset_bottom = 94.0
 grow_horizontal = 0
 
 [node name="Borrowed" type="Label" parent="Canvas/TopPanel/Labels"]

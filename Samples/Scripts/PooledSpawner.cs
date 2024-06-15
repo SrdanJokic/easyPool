@@ -11,9 +11,7 @@ public sealed partial class PooledSpawner : Node
     [Export] private Godot.Collections.Array<Node> _spawnedContainers;
     [Export] private PackedScene _projectile;
 
-    public delegate void ProcessDelegate(int borrowedCount, int availableCount);
-    public event ProcessDelegate OnProcessed;
-
+    public EasyNodePool<Projectile> ProjectilePool => _projectilePool;
     private EasyNodePool<Projectile> _projectilePool;
 
     public override void _Ready()
@@ -27,19 +25,11 @@ public sealed partial class PooledSpawner : Node
     {
         foreach (var spawnedContainer in _spawnedContainers)
         {
-            var projectile = BorrowProjectile(spawnedContainer);
+            var projectile = _projectilePool.Borrow(() => CreateProjectile(spawnedContainer));
 
             projectile.Reset();
-            projectile.Fire(Vector2.Right, () => ReturnProjectile(projectile));
+            projectile.Fire(Vector2.Right, () => _projectilePool.Return(projectile));
         }
-    }
-
-    private Projectile BorrowProjectile(Node parent)
-    {
-        var projectile = _projectilePool.Borrow(() => CreateProjectile(parent));
-        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
-
-        return projectile;
     }
 
     private Projectile CreateProjectile(Node parent)
@@ -48,12 +38,6 @@ public sealed partial class PooledSpawner : Node
         parent.AddChild(projectile);
 
         return projectile;
-    }
-
-    private void ReturnProjectile(Projectile projectile)
-    {
-        _projectilePool.Return(projectile);
-        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
     }
 
     public void Reset()
@@ -70,7 +54,5 @@ public sealed partial class PooledSpawner : Node
                 projectile.QueueFree();
             }
         }
-
-        OnProcessed?.Invoke(_projectilePool.CountBorrowed, _projectilePool.CountInPool);
     }
 }
