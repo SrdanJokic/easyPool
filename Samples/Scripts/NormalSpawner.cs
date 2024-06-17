@@ -8,7 +8,6 @@
 */
 
 using Godot;
-using System;
 
 namespace EasyPool.Samples;
 

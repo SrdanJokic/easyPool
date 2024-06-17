@@ -43,7 +43,7 @@ public interface IEasyPool<T>
     /// Delegate to be invoked if <see cref="Borrow"/>is invoked on an empty contain 
     /// - in this case, a new instance is returned using this func.
     /// </param>
-    /// <returns><An instance from a pool./returns>
+    /// <returns>An instance from a pool.</returns>
     T Borrow(Func<T> creationDelegate);
 
     /// <summary>

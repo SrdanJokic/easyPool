@@ -42,12 +42,7 @@ public class EasyPoolSettings
 
         public Builder WithParentOfInactives(Node parent)
         {
-            if (parent == null)
-            {
-                throw new ArgumentNullException(nameof(parent), $"Pool settings were not created; {nameof(parent)} was null");
-            }
-
-            Parent = parent;
+            Parent = parent ?? throw new ArgumentNullException(nameof(parent), $"Pool settings were not created; {nameof(parent)} was null");
             return this;
         }
 

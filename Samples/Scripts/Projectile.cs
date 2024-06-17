@@ -15,7 +15,7 @@ namespace EasyPool.Samples;
 public sealed partial class Projectile : RigidBody2D
 {
     [Export] private VisibleOnScreenNotifier2D _visibilityNotifier;
-    [Export] private float velocity;
+    [Export] private float _velocity = 200;
 
     private Vector2 _direction;
     private Action _onOutsideOfViewport;
@@ -50,6 +50,6 @@ public sealed partial class Projectile : RigidBody2D
             Position = Vector2.Zero;
         }
 
-        MoveAndCollide(_direction * velocity * (float)delta);
+        MoveAndCollide(_direction * _velocity * (float)delta);
     }
 }

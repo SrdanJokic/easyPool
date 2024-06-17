@@ -8,7 +8,6 @@
 */
 
 using Godot;
-using System;
 using System.Collections.Generic;
 
 namespace EasyPool.Stack;
@@ -39,7 +38,7 @@ public sealed class EasyStackPool<T> : EasyNodePool<T> where T : Node
         }
     }
 
-    protected override T DoBorrow(Func<T> creationDelegate)
+    protected override T DoBorrow()
     {
         return _container.Pop();
     }

@@ -8,7 +8,6 @@ mass = 0.01
 gravity_scale = 1.66533e-16
 script = ExtResource("2_qw6t0")
 _visibilityNotifier = NodePath("VisibleOnScreenNotifier2D")
-velocity = 200.0
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(3.8147e-06, -0.5)

@@ -20,16 +20,11 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
     public event Action<T> OnInstanceReturned;
     public event Action<T> OnInstanceBorrowed;
 
-    protected EasyPoolSettings Settings;
+    protected readonly EasyPoolSettings Settings;
 
-    public EasyNodePool(EasyPoolSettings settings)
+    protected EasyNodePool(EasyPoolSettings settings)
     {
-        if (settings == null)
-        {
-            throw new ArgumentNullException(nameof(settings), $"EasyPool failed to initialize; {nameof(settings)} was null");
-        }
-
-        Settings = settings;
+        Settings = settings ?? throw new ArgumentNullException(nameof(settings), $"EasyPool failed to initialize; {nameof(settings)} was null");
     }
 
     public void Clear()
@@ -50,14 +45,14 @@ public abstract class EasyNodePool<T> : IEasyPool<T> where T : Node
         }
 
         // Unlink the child from the pool tree
-        var instance = DoBorrow(creationDelegate);
+        var instance = DoBorrow();
         Settings.Parent?.RemoveChild(instance);
         OnInstanceBorrowed?.Invoke(instance);
 
         return instance;
     }
 
-    protected abstract T DoBorrow(Func<T> creationDelegate);
+    protected abstract T DoBorrow();
 
     public void Return(T instance)
     {
