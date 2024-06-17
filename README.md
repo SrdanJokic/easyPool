@@ -32,10 +32,10 @@ var projectile = _projectilePool.Borrow(() =>
 _projectilePool.Return(projectile);
 
 // The amount of instances borrowed from the pool, but not yet returned .
-var borrowed = _projectilePool.CountBorrowed();
+var borrowed = _projectilePool.CountBorrowed;
 
 // The amount of instances cached in the pool.
-var inPool = _projectilePool.CountBorrowed();
+var inPool = _projectilePool.CountInPool;
 ```
 
 The core folder of the package contains the structural and important scripts, while all others (currently only "Stack") should support various other implementations based on performance benefits.
